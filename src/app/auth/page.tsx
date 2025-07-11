@@ -1,5 +1,7 @@
+import AuthLayout from "@/components/auth/auth-layout";
+
 function AuthPage() {
-  return <div>AuthPage</div>;
+  return <AuthLayout />;
 }
 
 export default AuthPage;
