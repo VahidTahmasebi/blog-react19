@@ -14,6 +14,9 @@ import {
 } from "../ui/form";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
+import { signIn } from "@/lib/auth-client";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 const loginSchema = z.object({
   email: z.string().email("Invalid email address").min(1, "Email is required"),
@@ -23,6 +26,8 @@ const loginSchema = z.object({
 type LoginFormValues = z.infer<typeof loginSchema>;
 
 function LoginForm() {
+  const router = useRouter();
+
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const form = useForm<LoginFormValues>({
@@ -37,7 +42,24 @@ function LoginForm() {
     setIsLoading(true);
 
     try {
-    } catch (e) {}
+      const { error } = await signIn.email({
+        email: values.email,
+        password: values.password,
+        rememberMe: true,
+      });
+
+      if (error) {
+        toast("Login Failed!");
+        return;
+      }
+
+      toast("Login Success");
+      router.push("/");
+    } catch (e) {
+      console.log(e);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
