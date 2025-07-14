@@ -4,6 +4,8 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { toast } from "sonner";
+import { signUp } from "@/lib/auth-client";
 import {
   Form,
   FormControl,
@@ -31,7 +33,11 @@ const registerSchema = z
 
 type RegisterFormValues = z.infer<typeof registerSchema>;
 
-function RegisterForm() {
+interface RegisterFormProps {
+  onSuccess?: () => void;
+}
+
+function RegisterForm({ onSuccess }: RegisterFormProps) {
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const form = useForm<RegisterFormValues>({
@@ -48,7 +54,29 @@ function RegisterForm() {
     setIsLoading(true);
 
     try {
-    } catch (e) {}
+      const { error } = await signUp.email({
+        name: values.name,
+        email: values.email,
+        password: values.password,
+      });
+
+      if (error) {
+        toast("Failed to create account. Please try again.");
+        return;
+      }
+
+      toast(
+        "Account created successfully! Please check your email to verify your account.",
+      );
+
+      if (onSuccess) {
+        onSuccess();
+      }
+    } catch (e) {
+      console.log(e);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -90,7 +118,11 @@ function RegisterForm() {
             <FormItem>
               <FormLabel>Password</FormLabel>
               <FormControl>
-                <Input {...field} placeholder="Enter your password" />
+                <Input
+                  {...field}
+                  type="password"
+                  placeholder="Enter your password"
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
