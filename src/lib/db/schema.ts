@@ -14,7 +14,7 @@ export const users = pgTable("users", {
   email: varchar("email", { length: 255 }).notNull().unique(),
   emailVerified: boolean("email_verified").default(false),
   createdAt: timestamp("created_at").defaultNow().notNull(),
-  uploadAt: timestamp("upload_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
 
 export const sessions = pgTable("sessions", {
@@ -23,11 +23,11 @@ export const sessions = pgTable("sessions", {
     .references(() => users.id)
     .notNull(),
   token: varchar("token", { length: 255 }),
-  expiresAt: timestamp("expire_at").notNull(),
+  expiresAt: timestamp("expires_at").notNull(),
   ipAddress: varchar("ip_address", { length: 255 }),
   userAgent: text("user_agent"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
-  uploadAt: timestamp("upload_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
 
 export const accounts = pgTable("accounts", {
@@ -39,7 +39,7 @@ export const accounts = pgTable("accounts", {
   providerId: varchar("provider_id", { length: 255 }).notNull(),
   password: text("password"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
-  uploadAt: timestamp("upload_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
 
 export const posts = pgTable("posts", {
@@ -51,9 +51,8 @@ export const posts = pgTable("posts", {
   authorId: varchar("author_id", { length: 255 })
     .references(() => users.id)
     .notNull(),
-  providerId: varchar("provider_id", { length: 255 }).notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
-  uploadAt: timestamp("upload_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
 
 export const usersRelations = relations(posts, ({ one }) => ({
@@ -71,7 +70,7 @@ export const postsRelations = relations(posts, ({ one }) => ({
 }));
 
 export const accountsRelations = relations(accounts, ({ one }) => ({
-  author: one(users, {
+  user: one(users, {
     fields: [accounts.userId],
     references: [users.id],
   }),
