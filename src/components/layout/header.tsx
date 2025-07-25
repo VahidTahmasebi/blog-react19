@@ -2,8 +2,10 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useSession } from "@/lib/auth-client";
 import { cn } from "@/lib/utils";
 import { Button } from "../ui/button";
+import UserMenu from "../auth/user-menu";
 
 function Header() {
   const router = useRouter();
@@ -18,6 +20,8 @@ function Header() {
       href: "post/create",
     },
   ];
+
+  const { data: session, isPending } = useSession();
 
   return (
     <div className="sticky top-0 z-10 border-b bg-background">
@@ -45,16 +49,20 @@ function Header() {
           <div className="hidden md:block">{/* Search */}</div>
 
           <div className="flex items-center gap-2">
-            <Button
-              asChild
-              variant="default"
-              className="cursor-pointer"
-              onClick={() => {
-                router.push("/auth");
-              }}
-            >
-              <Link href="/auth">Login</Link>
-            </Button>
+            {isPending ? null : session?.user ? (
+              <UserMenu user={session?.user} />
+            ) : (
+              <Button
+                asChild
+                variant="default"
+                className="cursor-pointer"
+                onClick={() => {
+                  router.push("/auth");
+                }}
+              >
+                <Link href="/auth">Login</Link>
+              </Button>
+            )}
           </div>
         </div>
       </div>
