@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useSession } from "@/lib/auth-client";
 import { cn } from "@/lib/utils";
+import ThemeToggle from "../theme/theme-toggle";
 import { Button } from "../ui/button";
 import UserMenu from "../auth/user-menu";
 
@@ -47,6 +48,8 @@ function Header() {
 
         <div className="flex items-center gap-4">
           <div className="hidden md:block">{/* Search */}</div>
+
+          <ThemeToggle />
 
           <div className="flex items-center gap-2">
             {isPending ? null : session?.user ? (

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 // import { headers } from "next/headers";
 // import { auth } from "./lib/auth";
 import { getSessionCookie } from "better-auth/cookies";
+
 const protectedRoutes = ["/profile", "/post/create", "/post/edit"];
 
 export async function middleware(request: NextRequest) {
