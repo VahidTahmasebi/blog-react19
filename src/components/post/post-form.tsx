@@ -6,7 +6,7 @@ import { useForm } from "react-hook-form";
 import z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
-import { createPost } from "@/actions/post-actions";
+import { createPost, updatePost } from "@/actions/post-actions";
 import { Input } from "../ui/input";
 import { Textarea } from "../ui/textarea";
 import { Button } from "../ui/button";
@@ -23,9 +23,20 @@ const postSchema = z.object({
   content: z.string().min(10, "Content must be at least 10 characters long"),
 });
 
+interface PostFormProps {
+  isEditing?: boolean;
+  post?: {
+    id: number;
+    title: string;
+    description: string;
+    content: string;
+    slug: string;
+  };
+}
+
 type PostFormValues = z.infer<typeof postSchema>;
 
-function PostForm() {
+function PostForm({ isEditing, post }: PostFormProps) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
 
@@ -35,11 +46,18 @@ function PostForm() {
     formState: { errors },
   } = useForm<PostFormValues>({
     resolver: zodResolver(postSchema),
-    defaultValues: {
-      title: "",
-      description: "",
-      content: "",
-    },
+    defaultValues:
+      (isEditing ?? post)
+        ? {
+            title: post?.title,
+            description: post?.description,
+            content: post?.content,
+          }
+        : {
+            title: "",
+            description: "",
+            content: "",
+          },
   });
 
   const onFromSubmit = async (data: PostFormValues) => {
@@ -52,10 +70,18 @@ function PostForm() {
 
         let res;
 
-        res = await createPost(formData);
+        if (isEditing && post) {
+          res = await updatePost(post.id, formData);
+        } else {
+          res = await createPost(formData);
+        }
 
         if (res.success) {
-          toast("Post created successfully");
+          toast(
+            isEditing
+              ? "Post edited successfully"
+              : "Post created successfully",
+          );
           router.refresh();
           router.push("/");
         } else {
@@ -108,7 +134,11 @@ function PostForm() {
       </div>
 
       <Button type="submit" disabled={isPending} className="w-full mt-5">
-        {isPending ? "Saving Post..." : "Create Post"}
+        {isPending
+          ? "Saving Post..."
+          : isEditing
+            ? "Update Post"
+            : "Create Post"}
       </Button>
     </form>
   );
