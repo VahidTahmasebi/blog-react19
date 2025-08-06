@@ -10,11 +10,10 @@ import {
 } from "../ui/card";
 
 function PostCard({ post }: PostCardProps) {
-  console.log(post);
   return (
     <Card className="h-full flex flex-col">
       <CardHeader>
-        <Link href={`/post/${post.id}`} className="hover:underline">
+        <Link href={`/post/${post.slug}`} className="hover:underline">
           <CardTitle className="text-2xl">{post.title}</CardTitle>
         </Link>
         <CardDescription>
