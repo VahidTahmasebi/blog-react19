@@ -10,8 +10,6 @@ export const metadata: Metadata = {
 export default async function Home() {
   const posts = await getAllPosts();
 
-  console.log(posts);
-
   return (
     <div className="py-10">
       <div className="max-w-7xl mx-auto px-4">
